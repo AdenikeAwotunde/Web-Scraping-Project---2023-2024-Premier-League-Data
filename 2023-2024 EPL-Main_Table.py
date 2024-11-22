@@ -6,6 +6,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 import re
 
+# defining the  website's URL where data will be extracted
 url =  "https://fbref.com/en/comps/9/2023-2024/2023-2024-Premier-League-Stats"
 data= requests.get(url)
 soup= BeautifulSoup(data.text, 'html.parser')
@@ -25,16 +26,15 @@ for squad_link in squad_links:
 soup= BeautifulSoup(data.text, 'html.parser')
 league_table= soup.select('table.stats_table')[0]
 
-#
-# Extract data, ensuring consistent row length
+# Data Extraction
 data = []
 for row in league_table.find_all('tr'):
-    cols = row.find_all('td')[:18]  # Truncate to 18 columns
+    cols = row.find_all('td')[:18]  
     cols = [col.text.strip() for col in cols]
     data.append(cols)
 
 #checking the number of columns in the table
-num_columns = len(data[0])  # Assuming all rows have the same number of columns
+num_columns = len(data[0])  
 print(num_columns) 
 
 
@@ -50,30 +50,29 @@ def google_sheet_setup(service_account_path, sheet_name):
     client = gspread.authorize(creds)
     return client.open(sheet_name)
 
-# Path to your service account JSON file
+# service account JSON file
 service_account_path = r"C:\Users\user\Desktop\Projects\Webscrapping Project\webscrapppingdb-40d589693f5b.json"
 # Name of the Google Sheet
 sheet_name = "2023-2024 EPL Database"
 
-# Retrieve the Google Sheet
+# Retrieving  the Google Sheet
 sheet = google_sheet_setup(service_account_path, sheet_name)
 
-# Extracted headers from web scraping
+# Extracting headers from scraped data
 headers = [th.text.strip() for th in league_table.find_all('th')]  # Example scraping logic
 headers = headers[:18]  # Adjust the slicing as needed
 
-#
-# Add the "RK" column manually to the data
+
+# Adding the "RK" column manually to the data
 data_with_index = [[i] + row for i, row in enumerate(data)]
 
-# Clear the sheet (optional to remove any previous data or blank row)
+# Clearing the sheet 
 sheet.clear()
 
-# Insert headers in the first row (index=1)
+# Inserting headers in the first row 
 sheet.insert_row(headers, index=1)
 
-# Insert data starting from the second row (index=2)
+# Inserting data starting from the second row 
 sheet.insert_rows(data_with_index, row=2)
 sheet.delete_rows(2)
 
- #ing

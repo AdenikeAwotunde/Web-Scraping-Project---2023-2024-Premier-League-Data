@@ -35,7 +35,7 @@ def google_sheet_setup(service_account_path, sheet_name):
     client = gspread.authorize(creds)
     return client.open(sheet_name)
 
-# Path to your Google Service Account JSON key
+# Google Service Account JSON key
 service_account_path = r"C:\Users\user\Desktop\Projects\Webscrapping Project\webscrapppingdb-40d589693f5b.json"  # Replace with your actual path
 sheet_name = '2023-2024 EPL Database'  
 
